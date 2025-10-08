@@ -1,0 +1,18 @@
+type Query {
+  hello: String
+  getUsersByQuery(email: String!): [User]
+}
+
+type Mutation {
+  makeMove(x: Int!, y: Int!): String
+}
+
+type Subscription {
+  moveMade: String
+}
+
+type User {
+  id: ID
+  email: String
+  name: String
+}
