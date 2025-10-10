@@ -1,1 +1,1 @@
-export { queryResolvers } from "../resolvers/kionyxResolvers.js";
+export { kionyxQueryResolvers } from "../resolvers/kionyxResolvers.js";

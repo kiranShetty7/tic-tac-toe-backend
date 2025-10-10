@@ -1,18 +1,24 @@
 type Query {
-  hello: String
-  getUsersByQuery(email: String!): [User]
+  getUsers(email: String!): UserResponse!
 }
 
 type Mutation {
-  makeMove(x: Int!, y: Int!): String
+  sendInvite(x: Int, y: Int): String
 }
 
 type Subscription {
   moveMade: String
 }
 
+type UserResponse {
+  success: Boolean!
+  data: [User!]!
+}
+
 type User {
-  id: ID
-  email: String
+  _id: ID!
   name: String
+  email: String!
+  createdAt: String!
+  updatedAt: String!
 }

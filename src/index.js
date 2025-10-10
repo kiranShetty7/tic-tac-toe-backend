@@ -13,7 +13,6 @@ const WS_PORT = parseInt(process.env.WS_PORT, 10) || PORT + 1;
 
 async function startServer() {
   // 0️⃣ Connect to MongoDB (if URI provided)
-  console.log(process.env.MONGO_DB_URI);
   const mongoUri = process.env.MONGO_DB_URI;
   const mongoDbName = process.env.MONGO_DB_NAME;
   if (mongoUri) {
