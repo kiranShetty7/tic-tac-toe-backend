@@ -1,31 +1,60 @@
-import axios from "axios";
+import kionyxService from "../services/kionyxService.js";
 
 export const kionyxQueryResolvers = {
   getUsers: async (_parent, args, _ctx) => {
-    const email = args?.email;
+    const { email, userId } = args;
 
     if (!email) {
+      console.log(email, "changes in email");
       return {
         success: false,
         data: [],
       };
     }
-
-    const base = process.env.KIONYX_BACKEND_SERVICE + process.env.VERSION;
-    const url = `${base}/user/users`;
-
-    console.log("Kionyx URL:", url);
-
     try {
-      const res = await axios.get(url, {
-        headers: { "Content-Type": "application/json" },
-        params: { email },
-      });
+      const res = await kionyxService.searchUsers(email);
+      console.log(res, "response from kionyx");
 
-      // Return the exact API response structure
-      return res.data;
+      if (!res || res.success === undefined) {
+        return {
+          success: false,
+          data: [],
+        };
+      }
+
+      // Filter out the current user from the results
+      const filteredUsers = res.data.filter((user) => user._id !== userId);
+
+      return {
+        success: true,
+        data: filteredUsers,
+      };
     } catch (err) {
       console.warn(`Failed to call KIONYX service: ${err?.message || err}`);
+      return {
+        success: false,
+        data: [],
+      };
+    }
+  },
+
+  getUsersByIds: async (_parent, { userIds }, _ctx) => {
+    try {
+      const res = await kionyxService.getUsersByIds(userIds);
+
+      if (!res || res.success === undefined) {
+        return {
+          success: false,
+          data: [],
+        };
+      }
+
+      return {
+        success: true,
+        data: res.data || [],
+      };
+    } catch (error) {
+      console.warn(`Failed to get users by IDs: ${error?.message || error}`);
       return {
         success: false,
         data: [],

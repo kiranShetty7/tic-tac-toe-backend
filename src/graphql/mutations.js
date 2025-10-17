@@ -1,1 +1,3 @@
-export { ticTacToeMutationResolvers } from "../resolvers/ticTacToeMutations.js";
+import { ticTacToeMutationResolvers } from "../resolvers/ticTacToeMutations.js";
+
+export const mutationResolvers = ticTacToeMutationResolvers;

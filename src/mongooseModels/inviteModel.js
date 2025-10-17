@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const inviteSchema = new mongoose.Schema(
   {
@@ -9,7 +9,6 @@ const inviteSchema = new mongoose.Schema(
       ref: "Game",
       required: true,
     },
-    isExpired: { type: Boolean, default: false },
   },
   { timestamps: true }
 );
@@ -18,4 +17,4 @@ const inviteSchema = new mongoose.Schema(
 inviteSchema.index({ createdAt: 1 }, { expireAfterSeconds: 300 });
 
 const Invite = mongoose.model("Invite", inviteSchema);
-module.exports = Invite;
+export default Invite;

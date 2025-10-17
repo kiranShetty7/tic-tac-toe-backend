@@ -1,9 +1,12 @@
 type Query {
-  getUsers(email: String!): UserResponse!
+  getUsers(email: String!, userId: ID!): UserResponse!
+  getSentInvites(userId: ID!): SentInvitesResponse!
+  getReceivedInvites(userId: ID!): InvitePoolResponse!
+  getUsersByIds(userIds: [ID!]!): UserResponse!
 }
 
 type Mutation {
-  sendInvite(x: Int, y: Int): String
+  sendInvite(input: InviteInput!): InviteResponse!
 }
 
 type Subscription {
@@ -19,6 +22,76 @@ type User {
   _id: ID!
   name: String
   email: String!
-  createdAt: String!
-  updatedAt: String!
+}
+
+input InviteInput {
+  fromUserId: ID!
+  toUserId: ID!
+}
+
+type InviteResponse {
+  success: Boolean!
+  message: String
+  invite: SimpleInvite
+}
+
+type SimpleInvite {
+  _id: ID!
+  from: ID!
+  to: ID!
+  gameId: ID!
+}
+
+type InvitesResponse {
+  success: Boolean!
+  message: String
+  invites: [InviteWithUser!]!
+}
+
+type InviteWithUser {
+  _id: ID!
+  from: InviteUser!
+  to: ID!
+  gameId: ID!
+}
+
+type InviteUser {
+  _id: ID!
+  name: String
+  email: String!
+}
+
+type InviteWithUser {
+  _id: ID!
+  from: InviteUser!
+  to: ID!
+  gameId: ID!
+}
+
+type Invite {
+  _id: ID!
+  from: ID!
+  to: ID!
+  gameId: ID!
+}
+
+type InvitePoolResponse {
+  success: Boolean!
+  message: String
+  invites: [InviteWithUser!]!
+  users: [ID!]!
+}
+
+type SentInvitesResponse {
+  success: Boolean!
+  message: String
+  invites: [SentInvite!]!
+  users: [ID!]!
+}
+
+type SentInvite {
+  _id: ID!
+  from: ID!
+  to: ID!
+  gameId: ID!
 }

@@ -1,4 +1,4 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const leaderBoardSchema = new mongoose.Schema(
   {
@@ -20,4 +20,4 @@ const leaderBoardSchema = new mongoose.Schema(
 );
 
 const LeaderBoard = mongoose.model("LeaderBoard", leaderBoardSchema);
-module.exports = LeaderBoard;
+export default LeaderBoard;

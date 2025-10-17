@@ -1,14 +1,9 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema(
   {
     from: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     to: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    inviteId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Invite",
-      required: true,
-    },
     winner: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
@@ -16,25 +11,21 @@ const gameSchema = new mongoose.Schema(
     },
     winPattern: {
       type: String,
-      required: function () {
-        return !!this.winner;
-      },
     },
     isDraw: {
       type: Boolean,
       required: function () {
-        return !this.winner;
+        return !this.winner && this.status === "COMPLETED";
       },
     },
-    gameAbondoned: {
-      type: Boolean,
-      required: function () {
-        return !this.winner && !this.isDraw;
-      },
+    status: {
+      type: String,
+      enum: ["NOT_STARTED", "COMPLETED", "ABANDONED"],
+      default: "NOT_STARTED",
     },
   },
   { timestamps: true }
 );
 
 const Game = mongoose.model("Game", gameSchema);
-module.exports = Game;
+export default Game;
