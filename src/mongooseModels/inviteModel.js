@@ -2,11 +2,10 @@ import mongoose from "mongoose";
 
 const inviteSchema = new mongoose.Schema(
   {
-    from: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
-    to: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+    from: { type: String, required: true },
+    to: { type: String, required: true },
     gameId: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Game",
+      type: String,
       required: true,
     },
   },

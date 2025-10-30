@@ -6,6 +6,14 @@ export const ticTacToeMutationResolvers = {
     try {
       const { fromUserId, toUserId } = input;
 
+      // Prevent self-invites
+      if (fromUserId === toUserId) {
+        return {
+          success: false,
+          message: "You cannot send an invite to yourself",
+        };
+      }
+
       // Check for existing non-expired invites between these users (in either direction)
       const existingInvite = await Invite.findOne({
         isExpired: false,
@@ -30,10 +38,12 @@ export const ticTacToeMutationResolvers = {
         };
       }
 
+      const players = [fromUserId, toUserId];
+      const randomIndex = Math.random() > 0.5 ? 0 : 1;
       // Create a new game
       const game = new Game({
-        from: fromUserId,
-        to: toUserId,
+        playerX: players[randomIndex],
+        playerO: players[randomIndex === 0 ? 1 : 0],
       });
       await game.save();
 

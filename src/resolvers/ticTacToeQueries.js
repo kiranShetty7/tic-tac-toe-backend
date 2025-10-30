@@ -4,34 +4,51 @@ import kionyxService from "../services/kionyxService.js";
 export const ticTacToeQueryResolvers = {
   getSentInvites: async (_parent, { userId }, _context) => {
     try {
+      console.log("Fetching sent invites for userId:", userId);
       // Get invites where the specified user is the sender
       const invites = await Invite.find({
-        from: userId,
-      }).sort({ createdAt: -1 });
-
-      // Get unique user IDs from only the 'to' field (recipients)
-      const recipientIds = new Set();
-      invites.forEach((invite) => {
-        recipientIds.add(invite.to.toString());
+        from: userId.toString(),
+      }).sort({
+        createdAt: -1,
       });
+      console.log("Found invites:", invites);
+
+      // Get unique recipient IDs
+      const recipientIds = [
+        ...new Set(invites.map((invite) => invite.to.toString())),
+      ];
+
+      // Fetch recipient details
+      const recipientsResponse = await kionyxService.getUsersByIds(
+        recipientIds
+      );
+      const recipientsMap = recipientsResponse.success
+        ? recipientsResponse.data.reduce((map, user) => {
+            map[user._id] = user;
+            return map;
+          }, {})
+        : {};
 
       return {
         success: true,
         message: "Sent invites fetched successfully",
         invites: invites.map((invite) => ({
           _id: invite._id.toString(),
-          from: userId, // Just send the ID for sent invites
-          to: invite.to.toString(),
+          from: invite.from.toString(),
+          to: {
+            _id: invite.to.toString(),
+            name: recipientsMap[invite.to.toString()]?.name || "",
+            email:
+              recipientsMap[invite.to.toString()]?.email || "unknown@email.com",
+          },
           gameId: invite.gameId.toString(),
         })),
-        users: Array.from(recipientIds), // This contains only the recipient IDs
       };
     } catch (error) {
       return {
         success: false,
         message: `Failed to fetch sent invites: ${error.message}`,
         invites: [],
-        users: [],
       };
     }
   },
@@ -47,7 +64,7 @@ export const ticTacToeQueryResolvers = {
       const senderIds = [
         ...new Set(invites.map((invite) => invite.from.toString())),
       ];
-      console.log(senderIds, "sender ids");
+
       // Fetch sender details
       const sendersResponse = await kionyxService.getUsersByIds(senderIds);
       const sendersMap = sendersResponse.success
@@ -65,9 +82,9 @@ export const ticTacToeQueryResolvers = {
           from: {
             _id: invite.from.toString(),
             name: sendersMap[invite.from.toString()]?.name || "",
-            email: sendersMap[invite.from.toString()]?.email,
+            email: sendersMap[invite.from.toString()]?.email || "",
           },
-          to: invite.to.toString(),
+          to: userId,
           gameId: invite.gameId.toString(),
         })),
       };
@@ -75,7 +92,7 @@ export const ticTacToeQueryResolvers = {
       return {
         success: false,
         message: `Failed to fetch received invites: ${error.message}`,
-        invites: [],
+        invites: [], // Always return an empty array instead of undefined
       };
     }
   },

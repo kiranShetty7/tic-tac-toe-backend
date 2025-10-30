@@ -42,56 +42,34 @@ type SimpleInvite {
   gameId: ID!
 }
 
-type InvitesResponse {
-  success: Boolean!
-  message: String
-  invites: [InviteWithUser!]!
-}
-
-type InviteWithUser {
-  _id: ID!
-  from: InviteUser!
-  to: ID!
-  gameId: ID!
-}
-
 type InviteUser {
   _id: ID!
   name: String
   email: String!
 }
 
-type InviteWithUser {
+type SentInviteType {
+  _id: ID!
+  from: ID!
+  to: InviteUser!
+  gameId: ID!
+}
+
+type ReceivedInviteType {
   _id: ID!
   from: InviteUser!
   to: ID!
   gameId: ID!
 }
 
-type Invite {
-  _id: ID!
-  from: ID!
-  to: ID!
-  gameId: ID!
+type SentInvitesResponse {
+  success: Boolean!
+  message: String
+  invites: [SentInviteType!]!
 }
 
 type InvitePoolResponse {
   success: Boolean!
   message: String
-  invites: [InviteWithUser!]!
-  users: [ID!]!
-}
-
-type SentInvitesResponse {
-  success: Boolean!
-  message: String
-  invites: [SentInvite!]!
-  users: [ID!]!
-}
-
-type SentInvite {
-  _id: ID!
-  from: ID!
-  to: ID!
-  gameId: ID!
+  invites: [ReceivedInviteType!]!
 }
