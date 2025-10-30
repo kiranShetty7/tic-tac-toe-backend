@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 
 const gameSchema = new mongoose.Schema(
   {
+    tossFlipBy: { type: String },
     tossWinner: { type: String },
     playerX: { type: String },
     playerO: { type: String },
@@ -31,21 +32,7 @@ const gameSchema = new mongoose.Schema(
     },
     isDraw: {
       type: Boolean,
-      required: function () {
-        return !this.winner && this.status === "COMPLETED";
-      },
-      validate: {
-        validator: function (isDraw) {
-          return !isDraw || this.boardState.every((v) => v !== "");
-        },
-        message: "Game cannot be a draw if all squares are not filled",
-      },
       default: false,
-    },
-    status: {
-      type: String,
-      enum: ["NOT_STARTED", "COMPLETED", "ABANDONED"],
-      default: "NOT_STARTED",
     },
   },
   { timestamps: true }

@@ -8,6 +8,7 @@ export const ticTacToeQueryResolvers = {
       // Get invites where the specified user is the sender
       const invites = await Invite.find({
         from: userId.toString(),
+        status: "PENDING",
       }).sort({
         createdAt: -1,
       });
@@ -58,6 +59,7 @@ export const ticTacToeQueryResolvers = {
       // Get invites where the specified user is the recipient
       const invites = await Invite.find({
         to: userId,
+        status: "PENDING",
       }).sort({ createdAt: -1 });
 
       // Get unique sender IDs

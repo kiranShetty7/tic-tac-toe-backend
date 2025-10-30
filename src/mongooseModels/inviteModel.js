@@ -5,8 +5,14 @@ const inviteSchema = new mongoose.Schema(
     from: { type: String, required: true },
     to: { type: String, required: true },
     gameId: {
-      type: String,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Game",
       required: true,
+    },
+    status: {
+      type: String,
+      enum: ["PENDING", "ACCEPTED", "REJECTED"],
+      default: "PENDING",
     },
   },
   { timestamps: true }

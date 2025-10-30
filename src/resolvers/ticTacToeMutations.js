@@ -42,8 +42,7 @@ export const ticTacToeMutationResolvers = {
       const randomIndex = Math.random() > 0.5 ? 0 : 1;
       // Create a new game
       const game = new Game({
-        playerX: players[randomIndex],
-        playerO: players[randomIndex === 0 ? 1 : 0],
+        tossFlipBy: players[randomIndex],
       });
       await game.save();
 
@@ -70,6 +69,76 @@ export const ticTacToeMutationResolvers = {
       return {
         success: false,
         message: `Failed to send invite: ${error.message}`,
+      };
+    }
+  },
+
+  acceptInvite: async (_parent, { inviteId }, _context) => {
+    try {
+      // Find the invite and validate it exists
+      const invite = await Invite.findById(inviteId);
+      if (!invite) {
+        return {
+          success: false,
+          message: "Invite not found",
+        };
+      }
+
+      // Check if invite is still pending
+      if (invite.status !== "PENDING") {
+        return {
+          success: false,
+          message: `Cannot accept invite that is already ${invite.status.toLowerCase()}`,
+        };
+      }
+
+      // Update the invite status to ACCEPTED
+      invite.status = "ACCEPTED";
+      await invite.save();
+
+      return {
+        success: true,
+        message: "Game invite accepted successfully",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to accept invite: ${error.message}`,
+      };
+    }
+  },
+
+  rejectInvite: async (_parent, { inviteId }, _context) => {
+    try {
+      // Find the invite and validate it exists
+      const invite = await Invite.findById(inviteId);
+      if (!invite) {
+        return {
+          success: false,
+          message: "Invite not found",
+        };
+      }
+
+      // Check if invite is still pending
+      if (invite.status !== "PENDING") {
+        return {
+          success: false,
+          message: `Cannot reject invite that is already ${invite.status.toLowerCase()}`,
+        };
+      }
+
+      // Update the invite status to REJECTED
+      invite.status = "REJECTED";
+      await invite.save();
+
+      return {
+        success: true,
+        message: "Game invite rejected successfully",
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: `Failed to reject invite: ${error.message}`,
       };
     }
   },
